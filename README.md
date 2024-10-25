@@ -11,12 +11,12 @@ poetry add -D git+ssh://git@github.com/jaypikay/clickusagemd.git
 By adding a revision tag you can stay on a — at least for you — working version, instead of working with the latest and
 possible broken commit.
 
-The latest recommended revision is: **0.6.2**.
+The latest recommended revision is: **v0.9.1**.
 
 **To install:**
 
 ```sh
-poetry add -D git+ssh://git@github.com/jaypikay/clickusagemd.git@0.6.2
+poetry add -D git+ssh://git@github.com/jaypikay/clickusagemd.git@v0.9.1
 ```
 
 After installing, register the _pre-push_ hook.
