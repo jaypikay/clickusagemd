@@ -1,0 +1,23 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
+[tool.poetry]
+authors = ["JayPiKay <jpk@goatpr0n.de"]
+description = ""
+name = "clickusagemd"
+packages = [{ include = "clickusagelib/*.py" }, { include = "clickusagemd.py" }]
+version = "0.9.1"
+
+[tool.poetry.dependencies]
+GitPython = "^3.1.27"
+click = "^8.1.3"
+python = "^3.8"
+toml = "^0.10.2"
+semver = "^3.0.2"
+
+[tool.poetry.dev-dependencies]
+pre-commit = "^3.0.0"
+
+[tool.poetry.scripts]
+clickusagemd = "clickusagemd:cli"
