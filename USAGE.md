@@ -1,4 +1,4 @@
-# Clickusagemd v0.9.1 - Command Usage Overview
+# Clickusagemd v0.9.2 - Command Usage Overview
 ## install
 ```
 Usage: clickusagemd install [OPTIONS]
