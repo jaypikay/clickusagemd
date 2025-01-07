@@ -1,6 +1,6 @@
 from pathlib import Path
 
-PRE_PUSH_SCRIPT = """#!/usr/bin/env bash
+PRE_COMMIT_SCRIPT = """#!/usr/bin/env bash
 #:clickusagemd:
 
 set -e
@@ -27,7 +27,7 @@ def is_gitdir(func):
 
 
 def is_clickusagemd_hook(path: Path) -> bool:
-    githook = path / "pre-push"
+    githook = path / "pre-commit"
     if githook.exists():
         with githook.open("rt") as fd:
             file_contents = fd.read()
@@ -38,22 +38,25 @@ def is_clickusagemd_hook(path: Path) -> bool:
 
 @is_gitdir
 def install_hook(path: Path) -> bool:
-    githook = path / "pre-push"
+    githook = path / "pre-commit"
     if not githook.exists() or is_clickusagemd_hook(path):
         with githook.open("wt") as fd:
-            fd.write(PRE_PUSH_SCRIPT)
-            fd.close()
+            fd.write(PRE_COMMIT_SCRIPT)
             githook.chmod(0o755)
             print(f"Hook installed as `{githook}'.")
             return True
     else:
-        print(f"A hook is already installed as `{githook}'. Installation aborted.")
+        print(f"A hook is already installed as `{githook}'. Installation aborted.\n")
+        print(
+            "To manually install the hook add the command logic to the script '.git/hooks/pre-commit':\n"
+        )
+        print(PRE_COMMIT_SCRIPT)
     return False
 
 
 @is_gitdir
 def uninstall_hook(path: Path) -> bool:
-    githook = path / "pre-push"
+    githook = path / "pre-commit"
     if githook.exists() and is_clickusagemd_hook(path):
         githook.unlink()
         print(f"Hook `{githook}' uninstalled.")

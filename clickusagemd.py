@@ -150,12 +150,12 @@ def print(ctx: click.Context, poetry_project_file: TextIOWrapper):
         ctx.exit(1)
 
 
-@cli.command(help="Install clickusagemd as pre-push hook.")
+@cli.command(help="Install clickusagemd as pre-commit hook.")
 def install():
     install_hook(find_git_root(os.getcwd()))
 
 
-@cli.command(help="Uninstall clickusagemd pre-push hook.")
+@cli.command(help="Uninstall clickusagemd pre-commit hook.")
 def uninstall():
     uninstall_hook(find_git_root(os.getcwd()))
 
