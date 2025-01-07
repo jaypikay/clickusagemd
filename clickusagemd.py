@@ -2,11 +2,11 @@
 
 import importlib
 import os
-from typing import Iterator
+from collections.abc import Iterator
+from io import StringIO, TextIOWrapper
 
 import click
 import git
-import semver
 import toml
 
 from clickusagelib.githook import install_hook, uninstall_hook
@@ -20,20 +20,6 @@ def find_git_root(path) -> str:
 
 def get_git_repo(path: str) -> git.Repo:
     return git.Repo(path)
-
-
-def get_latest_version_tag(project_path: str) -> str:
-    root = find_git_root(project_path)
-    repo = get_git_repo(root)
-    for tag in reversed(repo.tags):
-        try:
-            ver = semver.Version.parse(tag.name.replace("v", ""))
-        except ValueError:
-            continue
-        finally:
-            return ver
-    print("No suitable version tag found.")
-    return "0.0.0"
 
 
 def iter_commands(
@@ -65,7 +51,7 @@ def iter_commands(
         yield f"{'#'*(depth)} {cmd_title}\n```\n{help_message}\n```"
 
 
-def generate_usage_md(script: str, version: str):
+def write_usage_md(script: str, version: str):
     assert ":" in script
     module, cliobj = script.split(":")
     if "." in module:
@@ -84,6 +70,30 @@ def generate_usage_md(script: str, version: str):
             print(command, file=fd)
 
 
+def generate_usage_md(script: str, version: str) -> str:
+    assert ":" in script
+
+    module, cliobj = script.split(":")
+    if "." in module:
+        module_name = module.split(".")[0]
+    else:
+        module_name = module
+
+    mod = importlib.import_module(module)
+    script_cli = getattr(mod, cliobj)
+
+    usage_md = StringIO()
+    usage_md.write(
+        f"# {module_name.capitalize()} v{version} - Command Usage Overview\n\n"
+    )
+    for sub_command in iter_commands(module_name, [], script_cli):
+        usage_md.write(sub_command)
+        usage_md.write("\n\n")
+
+    usage_md.seek(0)
+    return usage_md.read()
+
+
 @click.group()
 def cli():
     pass
@@ -96,15 +106,45 @@ def cli():
     default=os.path.join(find_git_root(os.getcwd()), "pyproject.toml"),
 )
 @click.pass_context
-def run(ctx, poetry_project_file):
-    click.echo("Generating USAGE.md...")
-    latest_verstion = get_latest_version_tag(os.path.abspath(poetry_project_file.name))
-    click.echo(f" - Latest Version: {latest_verstion}")
-    contents = toml.loads(poetry_project_file.read())
+def run(ctx: click.Context, poetry_project_file: TextIOWrapper):
+    project_settings = toml.load(poetry_project_file)
+
+    version = project_settings["tool"]["poetry"]["version"]
+    scripts = project_settings["tool"]["poetry"]["scripts"]
+
+    click.echo("Writing USAGE.md...")
+    click.echo(f" - Version: {version}")
+
+    usage_md_path = os.path.join(find_git_root(os.getcwd()), "USAGE.md")
+    with open(usage_md_path, "wt", encoding="utf-8") as f:
+        try:
+            for script in scripts.values():
+                f.write(generate_usage_md(script, version))
+        except KeyError:
+            click.echo(
+                "[ERROR] File does not contain 'tool.poetry.scripts' definitions."
+            )
+            ctx.exit(1)
+
+
+@click.command(help="Print markdown usage description'")
+@click.argument(
+    "poetry_project_file",
+    type=click.File(),
+    default=os.path.join(find_git_root(os.getcwd()), "pyproject.toml"),
+)
+@click.pass_context
+def print(ctx: click.Context, poetry_project_file: TextIOWrapper):
+    project_settings = toml.load(poetry_project_file)
+
+    version = project_settings["tool"]["poetry"]["version"]
+    scripts = project_settings["tool"]["poetry"]["scripts"]
+
+    click.echo("Generating USAGE.md...", err=True)
+    click.echo(f" - Version: {version}", err=True)
     try:
-        scripts = contents["tool"]["poetry"]["scripts"]
         for script in scripts.values():
-            generate_usage_md(script, latest_verstion)
+            click.echo(generate_usage_md(script, version))
     except KeyError:
         click.echo("[ERROR] File does not contain 'tool.poetry.scripts' definitions.")
         ctx.exit(1)
@@ -120,10 +160,10 @@ def uninstall():
     uninstall_hook(find_git_root(os.getcwd()))
 
 
+cli.add_command(print)
 cli.add_command(run)
 cli.add_command(install)
 cli.add_command(uninstall)
-
 
 if __name__ == "__main__":
     cli()
