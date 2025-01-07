@@ -1,4 +1,5 @@
-# Clickusagemd v0.9.3 - Command Usage Overview
+# Clickusagemd v0.10.0 - Command Usage Overview
+
 ## install
 ```
 Usage: clickusagemd install [OPTIONS]
@@ -8,6 +9,17 @@ Usage: clickusagemd install [OPTIONS]
 Options:
   --help  Show this message and exit.
 ```
+
+## print
+```
+Usage: clickusagemd print [OPTIONS] [POETRY_PROJECT_FILE]
+
+  Print markdown usage description'
+
+Options:
+  --help  Show this message and exit.
+```
+
 ## run
 ```
 Usage: clickusagemd run [OPTIONS] [POETRY_PROJECT_FILE]
@@ -17,6 +29,7 @@ Usage: clickusagemd run [OPTIONS] [POETRY_PROJECT_FILE]
 Options:
   --help  Show this message and exit.
 ```
+
 ## uninstall
 ```
 Usage: clickusagemd uninstall [OPTIONS]
@@ -26,3 +39,4 @@ Usage: clickusagemd uninstall [OPTIONS]
 Options:
   --help  Show this message and exit.
 ```
+
