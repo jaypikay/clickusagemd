@@ -1,10 +1,10 @@
-# Clickusagemd v0.10.0 - Command Usage Overview
+# Clickusagemd v0.10.1 - Command Usage Overview
 
 ## install
 ```
 Usage: clickusagemd install [OPTIONS]
 
-  Install clickusagemd as pre-push hook.
+  Install clickusagemd as pre-commit hook.
 
 Options:
   --help  Show this message and exit.
@@ -34,7 +34,7 @@ Options:
 ```
 Usage: clickusagemd uninstall [OPTIONS]
 
-  Uninstall clickusagemd pre-push hook.
+  Uninstall clickusagemd pre-commit hook.
 
 Options:
   --help  Show this message and exit.
