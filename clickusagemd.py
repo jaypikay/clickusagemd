@@ -28,8 +28,6 @@ def iter_commands(
     cliobj: click.Group | click.Command,
     depth: int = 1,
 ) -> Iterator[str]:
-    assert isinstance(cliobj, click.Command) or isinstance(cliobj, click.Group)
-
     if isinstance(cliobj, click.Group):
         if depth > 1:
             yield f"{'#'*depth} {cliobj.name}"
@@ -38,7 +36,7 @@ def iter_commands(
             yield from iter_commands(
                 module_name, cmd_chain + [name], cliobj.commands[name], depth=depth + 1
             )
-    else:
+    elif isinstance(cliobj, click.Command):
         ctx = click.get_current_context()
         cmd = f"{module_name} {' '.join(cmd_chain)}"
         help_message = cliobj.get_help(ctx).replace(ctx.command_path, cmd)
