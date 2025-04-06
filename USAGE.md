@@ -1,4 +1,4 @@
-# Clickusagemd v0.10.1 - Command Usage Overview
+# Clickusagemd v0.10.2 - Command Usage Overview
 
 ## install
 ```
@@ -22,7 +22,7 @@ Options:
 
 ## run
 ```
-Usage: clickusagemd run [OPTIONS] [POETRY_PROJECT_FILE]
+Usage: clickusagemd run [OPTIONS] [PYPROJECT_FILE]
 
   Generate markdown usage description.
 

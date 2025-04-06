@@ -30,7 +30,7 @@ def iter_commands(
 ) -> Iterator[str]:
     if isinstance(cliobj, click.Group):
         if depth > 1:
-            yield f"{'#'*depth} {cliobj.name}"
+            yield f"{'#' * depth} {cliobj.name}"
 
         for name in sorted(cliobj.commands):
             yield from iter_commands(
@@ -46,7 +46,7 @@ def iter_commands(
         else:
             cmd_title = cliobj.name
 
-        yield f"{'#'*(depth)} {cmd_title}\n```\n{help_message}\n```"
+        yield f"{'#' * (depth)} {cmd_title}\n```\n{help_message}\n```"
 
 
 def write_usage_md(script: str, version: str):
@@ -99,16 +99,16 @@ def cli():
 
 @cli.command(help="Generate markdown usage description.")
 @click.argument(
-    "poetry_project_file",
+    "pyproject_file",
     type=click.File(),
     default=os.path.join(find_git_root(os.getcwd()), "pyproject.toml"),
 )
 @click.pass_context
-def run(ctx: click.Context, poetry_project_file: TextIOWrapper):
-    project_settings = toml.load(poetry_project_file)
+def run(ctx: click.Context, pyproject_file: TextIOWrapper):
+    project_settings = toml.load(pyproject_file)
 
-    version = project_settings["tool"]["poetry"]["version"]
-    scripts = project_settings["tool"]["poetry"]["scripts"]
+    version = project_settings["project"]["version"]
+    scripts = project_settings["project"]["scripts"]
 
     click.echo("Writing USAGE.md...")
     click.echo(f" - Version: {version}")
@@ -132,11 +132,11 @@ def run(ctx: click.Context, poetry_project_file: TextIOWrapper):
     default=os.path.join(find_git_root(os.getcwd()), "pyproject.toml"),
 )
 @click.pass_context
-def print(ctx: click.Context, poetry_project_file: TextIOWrapper):
-    project_settings = toml.load(poetry_project_file)
+def print(ctx: click.Context, pyproject_file: TextIOWrapper):
+    project_settings = toml.load(pyproject_file)
 
-    version = project_settings["tool"]["poetry"]["version"]
-    scripts = project_settings["tool"]["poetry"]["scripts"]
+    version = project_settings["project"]["version"]
+    scripts = project_settings["project"]["scripts"]
 
     click.echo("Generating USAGE.md...", err=True)
     click.echo(f" - Version: {version}", err=True)
@@ -144,7 +144,7 @@ def print(ctx: click.Context, poetry_project_file: TextIOWrapper):
         for script in scripts.values():
             click.echo(generate_usage_md(script, version))
     except KeyError:
-        click.echo("[ERROR] File does not contain 'tool.poetry.scripts' definitions.")
+        click.echo("[ERROR] File does not contain 'project.scripts' definitions.")
         ctx.exit(1)
 
 
