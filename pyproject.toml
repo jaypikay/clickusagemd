@@ -8,11 +8,7 @@ version = "0.10.2"
 description = ""
 authors = [{ name = "JayPiKay", email = "jpk@goatpr0n.de" }]
 requires-python = "~=3.8"
-dependencies = [
-    "GitPython>=3.1.27,<4",
-    "click>=8.1.3,<9",
-    "toml>=0.10.2,<0.11",
-]
+dependencies = ["GitPython>=3.1.27,<4", "click>=8.1.3,<9", "toml>=0.10.2,<0.11"]
 
 [project.scripts]
 clickusagemd = "clickusagemd:cli"
@@ -21,13 +17,19 @@ clickusagemd = "clickusagemd:cli"
 dev = ["pre-commit>=3.0.0,<4"]
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "clickusagelib/*.py",
-    "clickusagemd.py",
-]
+include = ["clickusagelib/*.py", "clickusagemd.py"]
 
 [tool.hatch.build.targets.wheel]
-include = [
-    "clickusagelib/*.py",
-    "clickusagemd.py",
-]
+include = ["clickusagelib/*.py", "clickusagemd.py"]
+
+[tool.bumpver]
+current_version = "0.10.2"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = "scripts/uv-sync.sh"
+post_commit_hook = ""
+commit = true
+tag = true
+push = true
