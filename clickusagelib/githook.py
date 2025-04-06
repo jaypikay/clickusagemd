@@ -5,7 +5,7 @@ PRE_COMMIT_SCRIPT = """#!/usr/bin/env bash
 
 set -e
 
-poetry run clickusagemd run pyproject.toml
+uv run clickusagemd run pyproject.toml
 if ! git diff --quiet USAGE.md; then
     echo " - USAGE.md was updated"
     git add USAGE.md && git commit --amend --no-edit

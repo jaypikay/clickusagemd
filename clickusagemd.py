@@ -119,15 +119,13 @@ def run(ctx: click.Context, pyproject_file: TextIOWrapper):
             for script in scripts.values():
                 f.write(generate_usage_md(script, version))
         except KeyError:
-            click.echo(
-                "[ERROR] File does not contain 'tool.poetry.scripts' definitions."
-            )
+            click.echo("[ERROR] File does not contain 'project.scripts' definitions.")
             ctx.exit(1)
 
 
 @click.command(help="Print markdown usage description'")
 @click.argument(
-    "poetry_project_file",
+    "pyproject_file",
     type=click.File(),
     default=os.path.join(find_git_root(os.getcwd()), "pyproject.toml"),
 )
